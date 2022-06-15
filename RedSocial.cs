@@ -10,11 +10,13 @@ namespace TP3
      public class RedSocial
      {
         public List<Usuario> usuarios { get; set; }
+
         private DbSet<Usuario> misUsuarios;
         public List<Post> posts { get; set; }
         private DbSet<Post> efPosts { get; set; }
         public List<Tag> tags { get; set; }
         public Usuario usuarioActual { get; set; }
+
         private MyContext context;
 
         private DAL DB;

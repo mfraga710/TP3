@@ -26,6 +26,7 @@ namespace TP3
             modelBuilder.Entity<Post>().ToTable("Post").HasKey(p => p.id);
             modelBuilder.Entity<Comentario>().ToTable("Comentario").HasKey(c => c.id);
             modelBuilder.Entity<Reaccion>().ToTable("Reaccion").HasKey(r => r.id);
+            modelBuilder.Entity<UsuarioAmigo>().ToTable("Usuario_Amigo").HasKey(k => new { k.idAmigo, k.idUser });
 
             //relaciones
             modelBuilder.Entity<Post>()
@@ -54,6 +55,18 @@ namespace TP3
                 .WithMany(P => P.reacciones)
                 .HasForeignKey(R => R.idPost);
 
+            modelBuilder.Entity<UsuarioAmigo>()
+               .HasOne(UA => UA.user)
+               .WithMany(U => U.misAmigos)
+               .HasForeignKey(u => u.idAmigo)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UsuarioAmigo>()
+                .HasOne(UA => UA.amigo)
+                .WithMany(U => U.amigosMios)
+                .HasForeignKey(u => u.idUser)
+                .OnDelete(DeleteBehavior.Restrict);
+
             //modelBuilder.Entity<Usuario>()
             //    .HasMany(U => U.Amigo)
             //    .WithMany(P => P.User)
@@ -64,6 +77,7 @@ namespace TP3
             //    );
 
             //propiedades de los datos
+
             modelBuilder.Entity<Usuario>(
                 usr => 
                 {

@@ -15,13 +15,14 @@ namespace TP3
         public int intentosFallidos { get; set; }
         public bool bloqueado { get; set; }
         public bool isAdm { get; set; }
-        public ICollection<Usuario> Amigo { get; } = new List<Usuario>();
-        public ICollection<Usuario> User { get; } = new List<Usuario>();
+        public virtual ICollection<UsuarioAmigo> misAmigos { get; set; }
+        public virtual ICollection<UsuarioAmigo> amigosMios { get; set; }
         public List<AmigosRel> AmigosRel { get; set; }
         public List<Usuario> amigos {get;set;}
         public List<Post> misPosts { get; } = new List<Post>();
         public List<Comentario> misComentarios { get; set; }
         public List<Reaccion> misReacciones { get; set; }
+
         public Usuario() { }
 
         public Usuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm)
