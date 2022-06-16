@@ -37,10 +37,10 @@ namespace TP3.Forms
                     }
                     label5.Text = p.contenido;
                     label6.Text = p.fecha.ToString("d");
-                    foreach (Tag t in p.tags)
-                    {
-                        listBox1.Items.Add(t.palabra);
-                    }
+                    //foreach (Tag t in p.tags)
+                    //{
+                    //    listBox1.Items.Add(t.palabra);
+                    //}
                 }
             }
             refreshReacciones();
@@ -107,13 +107,13 @@ namespace TP3.Forms
         private void button6_Click(object sender, EventArgs e)
         {
             Post editedPost = rs.searchPost(id);
-            foreach (Tag tag in editedPost.tags)
-            {
-                if (tag.id == editedPost.id)
-                {
-                    tag.palabra = textBox2.Text;
-                }
-            }
+            //foreach (Tag tag in editedPost.tags)
+            //{
+            //    if (tag.id == editedPost.id)
+            //    {
+            //        tag.palabra = textBox2.Text;
+            //    }
+            //}
 
             refreshpost();
             frm.Enabled = true;
@@ -130,10 +130,10 @@ namespace TP3.Forms
             foreach (Post p in rs.posts)
             {
                 string pTags = "";
-                foreach (Tag t in p.tags)
-                {
-                    pTags = pTags + t.palabra + " ";
-                }
+                //foreach (Tag t in p.tags)
+                //{
+                //    pTags = pTags + t.palabra + " ";
+                //}
                 frm.dataGridViewPosts.Rows.Add(p.id, p.user.nombre + " " + p.user.apellido, p.contenido, pTags);
             }
             frm.Enabled = true;

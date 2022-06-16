@@ -477,11 +477,11 @@ namespace TP3.Forms
             {
                 string pTags = "";
                 Console.Write("2: "+p.contenido);
-                foreach (Tag t in p.tags)
-                {
-                    Console.Write("3: "+t.palabra);
-                    pTags = pTags + t.palabra + " ";
-                }
+                //foreach (Tag t in p.tags)
+                //{
+                //    Console.Write("3: "+t.palabra);
+                //    pTags = pTags + t.palabra + " ";
+                //}
                 dataGridViewPosts.Rows.Add(p.id, p.user.nombre + " " + p.user.apellido, p.contenido, pTags);
             }
             

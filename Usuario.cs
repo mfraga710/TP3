@@ -17,7 +17,6 @@ namespace TP3
         public bool isAdm { get; set; }
         public virtual ICollection<UsuarioAmigo> misAmigos { get; set; }
         public virtual ICollection<UsuarioAmigo> amigosMios { get; set; }
-        public List<AmigosRel> AmigosRel { get; set; }
         public List<Usuario> amigos {get;set;}
         public List<Post> misPosts { get; } = new List<Post>();
         public List<Comentario> misComentarios { get; set; }

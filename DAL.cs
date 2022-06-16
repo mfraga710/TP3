@@ -831,42 +831,7 @@ namespace TP3
                 }
             }
         }
-        public List<AmigosRel> inicializarAmigos()
-        {
-            List<AmigosRel> idAmigosUsers = new List<AmigosRel>();
-
-            //Defino el string con la consulta que quiero realizar
-            string queryString = "SELECT * from dbo.Usuario_Amigo";
-
-            // Creo una conexión SQL con un Using, de modo que al finalizar, la conexión se cierra y se liberan recursos
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                // Defino el comando a enviar al motor SQL con la consulta y la conexión
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                try
-                {
-                    //Abro la conexión
-                    connection.Open();
-                    //mi objecto DataReader va a obtener los resultados de la consulta, notar que a comando se le pide ExecuteReader()
-                    SqlDataReader reader = command.ExecuteReader();
-                    AmigosRel aux;
-                    //mientras haya registros/filas en mi DataReader, sigo leyendo
-                    while (reader.Read())
-                    {
-                        aux = new AmigosRel(reader.GetInt32(0), reader.GetInt32(1));
-                        idAmigosUsers.Add(aux);
-                    }
-                    //En este punto ya recorrí todas las filas del resultado de la query
-                    reader.Close();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            return idAmigosUsers;
-        }
+        
         public int agregarAmigo(int amigoId,int userId)
         {
             //primero me aseguro que lo pueda agregar a la base

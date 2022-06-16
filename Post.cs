@@ -12,8 +12,10 @@ namespace TP3
         public string contenido { get; set; }
         public List<Comentario> comentarios { get; set; }
         public List<Reaccion> reacciones { get; set; }
-        public List<Tag> tags { get; set; }
+        //public List<Tag> tags { get; set; }
         public DateTime fecha { get; set; }
+        public ICollection<Tag> Tag { get; } = new List<Tag>();
+        public List<PostsTags> PostsTags { get; set; }
 
         public Post() { }
         public Post(int id,Usuario user, string contenido)
@@ -23,7 +25,7 @@ namespace TP3
             this.contenido = contenido;
             reacciones = new List<Reaccion>();
             comentarios = new List<Comentario>();
-            tags = new List<Tag>();
+            //tags = new List<Tag>();
             this.fecha = DateTime.Now;
 
         }
@@ -35,7 +37,7 @@ namespace TP3
             this.contenido = contenido;
             reacciones = new List<Reaccion>();
             comentarios = new List<Comentario>();
-            tags = new List<Tag>();
+            //tags = new List<Tag>();
             this.fecha = DateTime.Now;
         }
 

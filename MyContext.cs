@@ -26,7 +26,9 @@ namespace TP3
             modelBuilder.Entity<Post>().ToTable("Post").HasKey(p => p.id);
             modelBuilder.Entity<Comentario>().ToTable("Comentario").HasKey(c => c.id);
             modelBuilder.Entity<Reaccion>().ToTable("Reaccion").HasKey(r => r.id);
+            modelBuilder.Entity<Tag>().ToTable("Tag").HasKey(k => k.id);
             modelBuilder.Entity<UsuarioAmigo>().ToTable("Usuario_Amigo").HasKey(k => new { k.idAmigo, k.idUser });
+            modelBuilder.Entity<PostsTags>().ToTable("Posts_Tags").HasKey(k => new { k.idPost, k.idTag });
 
             //relaciones
             modelBuilder.Entity<Post>()
@@ -38,22 +40,26 @@ namespace TP3
             modelBuilder.Entity<Comentario>()
                 .HasOne(C => C.usuario)
                 .WithMany(U => U.misComentarios)
-                .HasForeignKey(C => C.idUser);
+                .HasForeignKey(C => C.idUser)
+                .OnDelete(DeleteBehavior.NoAction); 
 
             modelBuilder.Entity<Comentario>()
                 .HasOne(C => C.post)
                 .WithMany(P => P.comentarios)
-                .HasForeignKey(C => C.idPost);
+                .HasForeignKey(C => C.idPost)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Reaccion>()
                 .HasOne(R => R.usuario)
                 .WithMany(U => U.misReacciones)
-                .HasForeignKey(R => R.idUser);
+                .HasForeignKey(R => R.idUser)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Reaccion>()
                 .HasOne(R => R.post)
                 .WithMany(P => P.reacciones)
-                .HasForeignKey(R => R.idPost);
+                .HasForeignKey(R => R.idPost)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UsuarioAmigo>()
                .HasOne(UA => UA.user)
@@ -67,16 +73,14 @@ namespace TP3
                 .HasForeignKey(u => u.idUser)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Usuario>()
-            //    .HasMany(U => U.Amigo)
-            //    .WithMany(P => P.User)
-            //    .UsingEntity<AmigosRel>(
-            //        ear => ear.HasOne(u => u.amigo).WithMany(a => a.AmigosRel).HasForeignKey(u => u.idAmigo),
-            //        ear => ear.HasOne(up => up.usuario).WithMany(u => u.AmigosRel).HasForeignKey(u => u.idUser),
-            //        ear => ear.HasKey(k => new { k.idAmigo, k.idUser })
-            //    );
-
-            //propiedades de los datos
+            modelBuilder.Entity<Post>()
+                .HasMany(T => T.Tag)
+                .WithMany(P => P.Post)
+                .UsingEntity<PostsTags>(
+                    etp => etp.HasOne(tp => tp.Tag).WithMany(p => p.PostsTags).HasForeignKey(t => t.idTag),
+                    etp => etp.HasOne(tp => tp.Post).WithMany(p => p.PostsTags).HasForeignKey(t => t.idPost),
+                    etp => etp.HasKey(k => new { k.idPost, k.idTag })
+                );
 
             modelBuilder.Entity<Usuario>(
                 usr => 

@@ -143,6 +143,6 @@
     <value>..\img\Akatsuki-Logo-PNG-Pic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ConnectionString" xml:space="preserve">
-    <value>Data Source=DESKTOP-AG2F151\SQLEXPRESS01;Initial Catalog=prueba;Integrated Security=True</value>
+    <value>data source=DESKTOP-ND87ERP\MSSQLSERVER01;initial catalog=TP3;trusted_connection=true</value>
   </data>
 </root>

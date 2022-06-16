@@ -9,10 +9,8 @@ namespace TP3
     public class  UsuarioAmigo
     {
         public int idUser { get; set; }
-        //[ForeignKey(nameof(num_usr))]
         public Usuario user { get; set; }
         public int idAmigo { get; set; }
-        //[ForeignKey(nameof(num_usr2))]
         public Usuario amigo { get; set; }
 
         public UsuarioAmigo() { }

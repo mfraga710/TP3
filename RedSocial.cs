@@ -76,31 +76,19 @@ namespace TP3
                 }
             }
 
-            foreach (Tag t in tags)
-            {
-                foreach (Post pT in t.posts)
-                {
-                    foreach (Post p in posts)
-                    {
-                        if (pT.id == p.id)
-                        {
-                            p.tags.Add(t);
-                        }
-                    }
-                }
-            }
-            /*INICIALIZAR AMIGOS*/
-            List<AmigosRel> Amigos = DB.inicializarAmigos();
-            foreach (Usuario u in usuarios)
-            {
-                foreach (AmigosRel amigos in Amigos)
-                {
-                    if (u.id == amigos.idUser)
-                    {
-                        u.amigos.Add(searchUser(amigos.idAmigo));
-                    }
-                }
-            }
+            //foreach (Tag t in tags)
+            //{
+            //    foreach (Post pT in t.posts)
+            //    {
+            //        foreach (Post p in posts)
+            //        {
+            //            if (pT.id == p.id)
+            //            {
+            //                p.tags.Add(t);
+            //            }
+            //        }
+            //    }
+            //}
 
         }       
         public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm)
@@ -237,8 +225,8 @@ namespace TP3
             {
                 if (!tags.Contains(tag))
                 {
-                    tag.posts.Add(p);
-                    p.tags.Add(tag);
+                    //tag.posts.Add(p);
+                    //p.tags.Add(tag);
                     int auxTagId = DB.agregarTag(tag.palabra, auxPostId);
                     tag.id = auxTagId;
                     DB.relTag(auxTagId, auxPostId);
@@ -418,15 +406,15 @@ namespace TP3
                             {
                                 foreach (Tag t in bTags)
                                 {
-                                    foreach (Tag tPost in pPost.tags)
-                                    {
-                                        if (t.palabra.Equals(tPost.palabra))
-                                        {
-                                            p.Add(pPost);
-                                            tagAgregado = true;
-                                            break;
-                                        }
-                                    }
+                                    //foreach (Tag tPost in pPost.tags)
+                                    //{
+                                    //    if (t.palabra.Equals(tPost.palabra))
+                                    //    {
+                                    //        p.Add(pPost);
+                                    //        tagAgregado = true;
+                                    //        break;
+                                    //    }
+                                    //}
                                     if (tagAgregado)
                                     {
                                         break;
@@ -451,15 +439,15 @@ namespace TP3
                         {
                             foreach (Tag t in bTags)
                             {
-                                foreach (Tag tPost in pPost.tags)
-                                {
-                                    if (t.palabra.Equals(tPost.palabra))
-                                    {
-                                        p.Add(pPost);
-                                        tagAgregado = true;
-                                        break;
-                                    }
-                                }
+                                //foreach (Tag tPost in pPost.tags)
+                                //{
+                                //    if (t.palabra.Equals(tPost.palabra))
+                                //    {
+                                //        p.Add(pPost);
+                                //        tagAgregado = true;
+                                //        break;
+                                //    }
+                                //}
                                 if (tagAgregado)
                                 {
                                     break;
