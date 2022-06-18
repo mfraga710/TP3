@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 
 namespace TP3
@@ -15,7 +16,8 @@ namespace TP3
         public List<Post> posts { get; set; }
         private DbSet<Post> efPosts { get; set; }
         public List<Tag> tags { get; set; }
-        public Usuario usuarioActual { get; set; }
+        public Usuario usuarioActual { get; set; }        
+        private DbSet<Comentario> efComent { get; set; }
 
         private MyContext context;
 
@@ -40,6 +42,8 @@ namespace TP3
                 misUsuarios = context.usuarios;
                 context.post.Load();
                 efPosts = context.post;
+                context.comentarios.Load();
+                efComent = context.comentarios;
                 
             }
             catch (Exception ex)
@@ -212,13 +216,27 @@ namespace TP3
         }
         public bool efPostear(Usuario u, string contenido, List<Tag> newTags) 
         {
-            Post nPost = new Post(u,contenido);
-            efPosts.Add(nPost);
+            try
+            {
+                Usuario user = context.usuarios.Where(usr => usr.id == u.id).FirstOrDefault();
 
-            var bla = context.SaveChanges();
-            return false;    
+                if (user != null)
+                {
+                    Post nPost = new Post(u, contenido);
+                    user.misPosts.Add(nPost);
+                    efPosts.Add(nPost);                    
+                    context.SaveChanges();
+                    
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
-        public void postear(Post p, List<Tag> newTags)
+        /*public void postear(Post p, List<Tag> newTags)
         {
             int auxPostId = DB.agregarPost(p.user,p.contenido);
             foreach (Tag tag in newTags)
@@ -236,10 +254,23 @@ namespace TP3
             p.id = auxPostId;
             posts.Add(p);
             usuarioActual.misPosts.Add(p);
-        }
-        public void modificarPost(Post p)
+        }*/   
+        public bool modificarPost(Post p)
         {
-            if (p != null)
+            bool salida = false;
+            foreach(Post efp in efPosts)
+            {
+                if(efp.id == p.id)
+                {
+                    efp.contenido = p.contenido;
+                    context.post.Update(efp);
+                    salida = true;
+                }
+            }
+            if(salida)
+                context.SaveChanges();
+            return salida;
+            /*if (p != null)
             {
                 DB.modificarPost(p.id, p.user, p.contenido);
                 foreach (Post post in posts)
@@ -249,11 +280,24 @@ namespace TP3
                         post.contenido = p.contenido;
                     }
                 }
-            }
+            }*/
         }
-        public void eliminarPost(Post p)
+        public bool eliminarPost(Post p)
         {
-            if(p.comentarios.Count > 0)
+            bool salida = false;
+            foreach(Post efp in efPosts)
+            {
+                if (efp.id == p.id)
+                {
+                    efp.contenido = p.contenido;
+                    context.post.Remove(efp);
+                    salida = true;
+                }
+            }
+            if (salida)
+                context.SaveChanges();
+            return salida;
+            /*if(p.comentarios.Count > 0)
             {
                 foreach(Comentario c in p.comentarios)
                 {
@@ -262,11 +306,36 @@ namespace TP3
             }            
             DB.eliminarPost(p.id);         
             p.user.misPosts.Remove(p);
-            posts.Remove(p);
+            posts.Remove(p);*/
         }
-        public void comentar(Post p, Comentario c) 
+        public bool comentar(Post p, Comentario c) 
         {
-            p.comentarios.Add(c);
+
+            try
+            {
+                Post post = context.post.Where(pos => pos.id == p.id).FirstOrDefault();
+
+                if (post != null)
+                {
+                    post.comentarios.Add(c);
+                    context.comentarios.Add(c);
+                    context.post.Update(post);
+                    context.SaveChanges();
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            /*bool salida = false;
+            efComent.Add(c);
+            salida = true;
+            if (salida)
+                context.SaveChanges();
+            return salida;
+            //p.comentarios.Add(c);*/
         }
         public void modificarComentario(Post p, Comentario c)
         {
@@ -299,8 +368,8 @@ namespace TP3
         public void comentarAdmin(Post p, Usuario u, string contenido)
         {
             //p.comentarios.Add(c);
-            Comentario coment = new Comentario(DB.agregarComentario(p, u, contenido), p, u, contenido);
-            p.comentarios.Add(coment);
+            //Comentario coment = new Comentario(DB.agregarComentario(p, u, contenido), p, u, contenido);
+            //p.comentarios.Add(coment);
         }
         public void modificarCommentAdmin(Post p,int comentId, string nuevoContenido)
         {
@@ -544,11 +613,19 @@ namespace TP3
                 salida.Add(new List<string> { u.id.ToString(), u.nombre + " " + u.apellido });
             return salida;
         }
-        public List<List<string>> obtenerPosts()
+        public List<Post> obtenerPosts()
         {
-            List<List<string>> salida = new List<List<string>>();
+            List<Post> salida = new List<Post>();
             foreach (Post p in context.post)
-                salida.Add(new List<string> { p.id.ToString(), p.user.nombre + " " + p.user.apellido });
+                salida.Add( p);
+            return salida;
+        }
+
+        public List<Comentario> obtenerComentario()
+        {
+            List<Comentario> salida = new List<Comentario>();
+            foreach (Comentario c in context.comentarios)
+                salida.Add(c);
             return salida;
         }
     }

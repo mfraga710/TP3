@@ -102,19 +102,18 @@ namespace TP3.Forms
             }
         }
 
+        
+
         // BUTTON - POSTEA
         private void btnPublicarPost_Click(object sender, EventArgs e)
         {
-            rs.efPostear(rs.usuarioActual, textBoxNuevoPost.Text, crearTag());
+            rs.efPostear(rs.usuarioActual, textBoxNuevoPost.Text, crearTag());            
+            refreshHomePosts(rs.obtenerPosts());
+            textBoxNuevoPost.Clear();
+            MessageBox.Show("Su posteo ha sido publicado correctamente");
             
-            //Post post = new Post(rs.usuarioActual,textBoxNuevoPost.Text);
             //string[] sTags = textBoxNuevoTag.Text.Split('#');
-            
-            //rs.postear(post, crearTag());
-            //refreshHomePosts(rs.posts);
-            //textBoxNuevoPost.Clear();
-            //textBoxNuevoTag.Clear();
-            //MessageBox.Show("Su posteo ha sido publicado correctamente");
+            //textBoxNuevoTag.Clear();           
         }
         //corregir y ver si lo cambio a la clase red social
         private List<Tag> crearTag()
@@ -153,6 +152,7 @@ namespace TP3.Forms
             if (selrow.Count > 0)
             {
                 int postId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
+
                 crearContenido(postId);
 
                 textBoxComentarPost.Clear();
@@ -166,14 +166,15 @@ namespace TP3.Forms
 
         private void crearContenido(int idP)
         {
-            foreach (Post p in rs.posts)
+            foreach (Post p in rs.obtenerPosts())
             {
                 if (p.id == idP)
                 {
-                    string contenido = textBoxComentarPost.Text;                
+                    string contenido = textBoxComentarPost.Text;
                     //DB.agregarComentario(p, p.user, contenido);
-                    Comentario coment = new Comentario(DB.agregarComentario(p, p.user, contenido),p, rs.usuarioActual, contenido);
-                    rs.comentar(p, coment);
+                    Comentario coment = new Comentario(p, rs.usuarioActual, contenido);
+                    rs.comentar(p,coment);
+                    rs.obtenerComentario();
                     refreshList(p);
                 }
             }
@@ -218,7 +219,7 @@ namespace TP3.Forms
             if (selrow.Count > 0)
             {
                 int postId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-                foreach (Post p in rs.posts)
+                foreach (Post p in rs.obtenerPosts())
                 {
                     if (p.id == postId)
                     {

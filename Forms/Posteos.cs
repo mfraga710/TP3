@@ -49,7 +49,7 @@ namespace TP3.Forms
         // BOTON GUARDAR
         private void button1_Click(object sender, EventArgs e)
         {
-            foreach (Post p in rs.posts)
+            foreach (Post p in rs.obtenerPosts())
             {
                 if (p.id == id)
                 {
@@ -127,7 +127,7 @@ namespace TP3.Forms
         private void refreshpost()
         {
             frm.dataGridViewPosts.Rows.Clear();
-            foreach (Post p in rs.posts)
+            foreach (Post p in rs.obtenerPosts())
             {
                 string pTags = "";
                 //foreach (Tag t in p.tags)
