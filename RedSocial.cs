@@ -48,6 +48,7 @@ namespace TP3
                 context.reacciones.Load();
                 efReacciones = context.reacciones;
                 context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
+                //context.tags.include ??
             }
             catch (Exception ex)
             {
@@ -96,13 +97,13 @@ namespace TP3
             //}
 
         }       
-        public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm)
+        public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm) // OK
         {
             Usuario nuevo = new Usuario(nombre,apellido, mail, dni, pass, isAdm);
             misUsuarios.Add(nuevo);
             context.SaveChanges();
         }
-        public bool modificaUsuario(Usuario usuarioModificado)
+        public bool modificaUsuario(Usuario usuarioModificado) // OK
         {
             bool salida = false;
             foreach (Usuario u in context.usuarios)
@@ -119,7 +120,7 @@ namespace TP3
                 context.SaveChanges();
             return salida;
         }
-        public bool eliminarUsuario(Usuario u)
+        public bool eliminarUsuario(Usuario u) // OK
         {
             bool result = false;
             foreach (Usuario lU in context.usuarios)
@@ -189,7 +190,7 @@ namespace TP3
                 }
             }
         }
-        public bool efPostear(Usuario u, string contenido, List<Tag> newTags) 
+        public bool efPostear(Usuario u, string contenido, List<Tag> newTags)  //OK (FALTA TAG)
         {
             try
             {
@@ -211,7 +212,7 @@ namespace TP3
                 return false;
             }
         }
-        public bool modificarPost(Post p)
+        public bool modificarPost(Post p) // OK
         {
             bool salida = false;
             foreach(Post efp in efPosts)
@@ -227,7 +228,7 @@ namespace TP3
                 context.SaveChanges();
             return salida;
         }
-        public bool eliminarPost(Post p)
+        public bool eliminarPost(Post p) // OK
         {
             bool salida = false;
             foreach(Post efp in efPosts)
@@ -243,7 +244,7 @@ namespace TP3
                 context.SaveChanges();
             return salida;
         }
-        public bool comentar(Post p, Comentario c) 
+        public bool comentar(Post p, Comentario c) // OK
         {
 
             try
@@ -265,12 +266,12 @@ namespace TP3
                 return false;
             }
         }
-        public void modificarComentario(Comentario c)
+        public void modificarComentario(Comentario c) // OK
         {
             context.comentarios.Update(c);
             context.SaveChanges();
         }
-        public void modificarPostAdmin(int postId, string nuevoContenido)
+        public void modificarPostAdmin(int postId, string nuevoContenido) // FALTA
         {
             if (postId != 0)
             {
@@ -290,7 +291,7 @@ namespace TP3
             //Comentario coment = new Comentario(DB.agregarComentario(p, u, contenido), p, u, contenido);
             //p.comentarios.Add(coment);
         }
-        public void modificarCommentAdmin(Post p,int comentId, string nuevoContenido)
+        public void modificarCommentAdmin(Post p,int comentId, string nuevoContenido) // FALTA
         {
             if (comentId != 0)
             {
@@ -304,12 +305,12 @@ namespace TP3
                 }
             }
         }
-        public void quitarComentario(Comentario c)
+        public void quitarComentario(Comentario c) // OK
         {
             context.comentarios.Remove(c);
             context.SaveChanges();
         }
-        public void reaccionar(Post p, Reaccion r)
+        public void reaccionar(Post p, Reaccion r) // OK
         {
             
             bool newReaction = true;
@@ -506,14 +507,14 @@ namespace TP3
 
 
         }
-        public List<List<string>> obtenerUsuarios()
+        public List<List<string>> obtenerUsuarios() //LINQ DE USUARIO (FALTA)
         {
             List<List<string>> salida = new List<List<string>>();
             foreach (Usuario u in context.usuarios)
                 salida.Add(new List<string> { u.id.ToString(), u.nombre + " " + u.apellido });
             return salida;
         }
-        public List<Post> obtenerPosts()
+        public List<Post> obtenerPosts() //LINQ DE POSTS (FALTA)
         {
             List<Post> salida = new List<Post>();
             foreach (Post p in context.post)
@@ -530,7 +531,7 @@ namespace TP3
         {
             return context.reacciones.Where(c => c.idUser == uId).FirstOrDefault();
         }
-        public List<Comentario> obtenerComentario()
+        public List<Comentario> obtenerComentario() //LINQ DE COMENTARIO (FALTA)
         {
             List<Comentario> salida = new List<Comentario>();
             foreach (Comentario c in context.comentarios)
