@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TP3.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -110,7 +110,8 @@ namespace TP3.Migrations
                         name: "FK_Comentario_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comentario_Usuarios_idUser",
                         column: x => x.idUser,
@@ -159,7 +160,8 @@ namespace TP3.Migrations
                         name: "FK_Reaccion_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reaccion_Usuarios_idUser",
                         column: x => x.idUser,

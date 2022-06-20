@@ -11,7 +11,7 @@ namespace TP3
         public Usuario user { get; set; }
         public string contenido { get; set; }
         public List<Comentario> comentarios { get; set; } = new List<Comentario>();
-        public List<Reaccion> reacciones { get; set; }
+        public List<Reaccion> reacciones { get; set; } = new List<Reaccion>();
         //public List<Tag> tags { get; set; }
         public DateTime fecha { get; set; }
         public ICollection<Tag> Tag { get; } = new List<Tag>();

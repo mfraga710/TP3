@@ -20,29 +20,26 @@ namespace TP3.Forms
             this.rs = rs1;
             this.id = postId;
             InitializeComponent();
-            
-            foreach (Post p in rs1.posts)
+
+            Post p = rs.searchPost(postId);
+
+            if(rs.usuarioActual.id == p.user.id || rs.usuarioActual.isAdm)
             {
-                if (p.id == postId)
-                {
-                    if(rs.usuarioActual.id == p.user.id || rs.usuarioActual.isAdm)
-                    {
-                        groupBox2.Visible = true;
-                        groupBox4.Visible = true;
-                    }
-                    else
-                    {
-                        groupBox2.Visible = false;
-                        groupBox4.Visible = false;
-                    }
-                    label5.Text = p.contenido;
-                    label6.Text = p.fecha.ToString("d");
-                    //foreach (Tag t in p.tags)
-                    //{
-                    //    listBox1.Items.Add(t.palabra);
-                    //}
-                }
+                groupBox2.Visible = true;
+                groupBox4.Visible = true;
             }
+            else
+            {
+                groupBox2.Visible = false;
+                groupBox4.Visible = false;
+            }
+            label5.Text = p.contenido;
+            label6.Text = p.fecha.ToString("d");
+            //foreach (Tag t in p.tags)
+            //{
+            //    listBox1.Items.Add(t.palabra);
+            //}
+
             refreshReacciones();
 
         }
@@ -142,7 +139,6 @@ namespace TP3.Forms
         // CLICK ME GUSTA
         private void button7_Click(object sender, EventArgs e)
         {
-
             Post editedPost = rs.searchPost(id);
             Reaccion reaccion = new Reaccion(0,Reaccion.ME_GUSTA, editedPost, rs.usuarioActual);
             rs.reaccionar(editedPost, reaccion);
@@ -159,8 +155,8 @@ namespace TP3.Forms
         // CLICK ELImINAR REACCION
         private void button9_Click(object sender, EventArgs e)
         {
-            Post editedPost = rs.searchPost(id);
-            Reaccion reaccion = new Reaccion(0,Reaccion.NO_ME_GUSTA, editedPost, rs.usuarioActual);
+            Post editedPost = rs.searchPost(id);            
+            Reaccion reaccion = rs.obtenerEfReaccion(rs.usuarioActual.id);
             rs.quitarReaccion(editedPost, reaccion);
             refreshReacciones();
         }
@@ -189,6 +185,11 @@ namespace TP3.Forms
         {
             frm.Enabled = true;
             this.Close();
+        }
+
+        private void Posteos_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

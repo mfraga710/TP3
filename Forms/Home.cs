@@ -100,9 +100,7 @@ namespace TP3.Forms
             {
                 MessageBox.Show("Debe seleccionar un amigo para eliminar");
             }
-        }
-
-        
+        }       
 
         // BUTTON - POSTEA
         private void btnPublicarPost_Click(object sender, EventArgs e)
@@ -175,7 +173,7 @@ namespace TP3.Forms
                     Comentario coment = new Comentario(p, rs.usuarioActual, contenido);
                     rs.comentar(p,coment);
                     rs.obtenerComentario();
-                    refreshList(p);
+                        refreshList(p);
                 }
             }
         }
@@ -277,10 +275,8 @@ namespace TP3.Forms
         private void editarComent()
         {
             var selrow = dataGridViewComentarios.SelectedRows;
-            var selrowPost = dataGridViewPosts.SelectedRows;
             if (selrow.Count > 0) 
             {
-                int postId = Int32.Parse(selrowPost[0].Cells[0].Value.ToString());
                 // selrow.Count para que no pinche cuando no se selecciona ningún comentario
                 if (selrow == null || selrow.Count <= 0)
                 {
@@ -289,7 +285,8 @@ namespace TP3.Forms
                 else
                 {
                     int comtId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-                    EditarComentario edit = new EditarComentario(rs, this, comtId, postId);
+                    Comentario coment = rs.obtenerEfComments(comtId);
+                    EditarComentario edit = new EditarComentario(rs, this, coment);
                     this.Enabled = false;
                     edit.Show();
                 }
@@ -306,11 +303,9 @@ namespace TP3.Forms
             var selrow = dataGridViewComentarios.SelectedRows;
             if (selrow.Count > 0) 
             {
-                int commentId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-                var selPostRow = dataGridViewPosts.SelectedRows;
-                int postId = Int32.Parse(selPostRow[0].Cells[0].Value.ToString());
-
-                rs.quitarComentario(rs.searchPost(postId), rs.searchComent(commentId));
+                int comtId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
+                Comentario coment = rs.obtenerEfComments(comtId);
+                rs.quitarComentario(coment);
                 refreshCommentsGrid();
             }
             else 
@@ -474,10 +469,9 @@ namespace TP3.Forms
 
             dataGridViewPosts.Rows.Clear();
             
-            foreach (Post p in listaPost)
+            foreach (Post p in rs.obtenerPosts())
             {
-                string pTags = "";
-                Console.Write("2: "+p.contenido);
+                string pTags = "";                
                 //foreach (Tag t in p.tags)
                 //{
                 //    Console.Write("3: "+t.palabra);
@@ -487,5 +481,7 @@ namespace TP3.Forms
             }
             
         }
+
+
     }
 }

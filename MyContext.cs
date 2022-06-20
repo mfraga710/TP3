@@ -47,7 +47,7 @@ namespace TP3
                 .HasOne(C => C.post)
                 .WithMany(P => P.comentarios)
                 .HasForeignKey(C => C.idPost)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reaccion>()
                 .HasOne(R => R.usuario)
@@ -59,7 +59,7 @@ namespace TP3
                 .HasOne(R => R.post)
                 .WithMany(P => P.reacciones)
                 .HasForeignKey(R => R.idPost)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UsuarioAmigo>()
                .HasOne(UA => UA.user)

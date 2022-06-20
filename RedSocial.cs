@@ -18,6 +18,7 @@ namespace TP3
         public List<Tag> tags { get; set; }
         public Usuario usuarioActual { get; set; }        
         private DbSet<Comentario> efComent { get; set; }
+        private DbSet<Reaccion> efReacciones { get; set; }
 
         private MyContext context;
 
@@ -44,7 +45,9 @@ namespace TP3
                 efPosts = context.post;
                 context.comentarios.Load();
                 efComent = context.comentarios;
-                
+                context.reacciones.Load();
+                efReacciones = context.reacciones;
+                context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
             }
             catch (Exception ex)
             {
@@ -52,8 +55,6 @@ namespace TP3
                 throw ex;
             }
 
-
-            //usuarios = DB.inicializarUsuarios();
             posts = DB.inicializarPosts();
             tags = DB.inicializarTags();
 
@@ -97,10 +98,6 @@ namespace TP3
         }       
         public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm)
         {
-            //var aux = DB.agregarUsuario(dni, nombre, apellido, mail, pass, 0, false, false);
-            //usuarios.Add(new Usuario(aux , nombre, apellido, mail, dni, pass));
-            //
-
             Usuario nuevo = new Usuario(nombre,apellido, mail, dni, pass, isAdm);
             misUsuarios.Add(nuevo);
             context.SaveChanges();
@@ -121,23 +118,6 @@ namespace TP3
             if (salida)
                 context.SaveChanges();
             return salida;
-
-            //if (usuarioModificado != null)
-            //{
-            //    DB.modificarUsuario(usuarioModificado.id, usuarioModificado.nombre, usuarioModificado.apellido, usuarioModificado.email, usuarioModificado.dni,
-            //    usuarioModificado.bloqueado, usuarioModificado.isAdm);
-            //    foreach (Usuario user in usuarios)
-            //    {
-            //        if (user.id == usuarioModificado.id)
-            //        {
-            //            user.nombre = usuarioModificado.nombre;
-            //            user.apellido = usuarioModificado.apellido;
-            //            user.email = usuarioModificado.email;
-            //            user.dni = usuarioModificado.dni;
-
-            //        }
-            //    }
-            //}
         }
         public bool eliminarUsuario(Usuario u)
         {
@@ -153,11 +133,6 @@ namespace TP3
             if (result)
                 context.SaveChanges();
             return result;
-
-            //if (DB.eliminarUsuario(u.id) > 0) 
-            //{
-            //    usuarios.Remove(u);
-            //}
         }
         public bool iniciarSesion(string usuario, string pass)
         {
@@ -236,25 +211,6 @@ namespace TP3
                 return false;
             }
         }
-        /*public void postear(Post p, List<Tag> newTags)
-        {
-            int auxPostId = DB.agregarPost(p.user,p.contenido);
-            foreach (Tag tag in newTags)
-            {
-                if (!tags.Contains(tag))
-                {
-                    //tag.posts.Add(p);
-                    //p.tags.Add(tag);
-                    int auxTagId = DB.agregarTag(tag.palabra, auxPostId);
-                    tag.id = auxTagId;
-                    DB.relTag(auxTagId, auxPostId);
-                    tags.Add(tag);
-                }
-            }
-            p.id = auxPostId;
-            posts.Add(p);
-            usuarioActual.misPosts.Add(p);
-        }*/   
         public bool modificarPost(Post p)
         {
             bool salida = false;
@@ -270,17 +226,6 @@ namespace TP3
             if(salida)
                 context.SaveChanges();
             return salida;
-            /*if (p != null)
-            {
-                DB.modificarPost(p.id, p.user, p.contenido);
-                foreach (Post post in posts)
-                {
-                    if (post.id == p.id)
-                    {
-                        post.contenido = p.contenido;
-                    }
-                }
-            }*/
         }
         public bool eliminarPost(Post p)
         {
@@ -297,16 +242,6 @@ namespace TP3
             if (salida)
                 context.SaveChanges();
             return salida;
-            /*if(p.comentarios.Count > 0)
-            {
-                foreach(Comentario c in p.comentarios)
-                {
-                    DB.eliminarComent(c.id);
-                }
-            }            
-            DB.eliminarPost(p.id);         
-            p.user.misPosts.Remove(p);
-            posts.Remove(p);*/
         }
         public bool comentar(Post p, Comentario c) 
         {
@@ -329,27 +264,11 @@ namespace TP3
             {
                 return false;
             }
-            /*bool salida = false;
-            efComent.Add(c);
-            salida = true;
-            if (salida)
-                context.SaveChanges();
-            return salida;
-            //p.comentarios.Add(c);*/
         }
-        public void modificarComentario(Post p, Comentario c)
+        public void modificarComentario(Comentario c)
         {
-            if(p != null && c != null)
-            {
-                DB.modificarComent(c);
-                foreach (Comentario coment in p.comentarios)
-                {
-                    if (coment.id == c.id)
-                    {
-                        coment.contenido = c.contenido;
-                    }
-                }
-            }
+            context.comentarios.Update(c);
+            context.SaveChanges();
         }
         public void modificarPostAdmin(int postId, string nuevoContenido)
         {
@@ -385,11 +304,10 @@ namespace TP3
                 }
             }
         }
-        public void quitarComentario(Post p, Comentario c)
+        public void quitarComentario(Comentario c)
         {
-            DB.eliminarComent(c.id);
-            if(p != null && c != null)
-                p.comentarios.Remove(c);
+            context.comentarios.Remove(c);
+            context.SaveChanges();
         }
         public void reaccionar(Post p, Reaccion r)
         {
@@ -405,11 +323,8 @@ namespace TP3
             }
             if (newReaction)
             {
-                int idAuxR = DB.agregarReaccion(r.tipoReaccion, p.id, r.usuario.id);
-                r.id = idAuxR;
-                p.reacciones.Add(r);
-
-                                 
+                context.reacciones.Add(r);
+                context.SaveChanges();                                 
             }
         }        
         public void modificarReaccion(Post p, Reaccion r)
@@ -420,23 +335,15 @@ namespace TP3
                 if (reaccion.usuario.id == usuarioActual.id)
                 {
                     reaccion.tipoReaccion = r.tipoReaccion;
-                    DB.modificarReaccion(reaccion.id, reaccion.tipoReaccion);
+                    context.reacciones.Update(reaccion);
+                    context.SaveChanges();                    
                 }
             }
         }
         public void quitarReaccion(Post p, Reaccion r)
         {
-            Reaccion rEliminar = null;
-            foreach (Reaccion reaccion in p.reacciones)
-            {
-                if (reaccion.usuario.id == usuarioActual.id)
-                {
-                    rEliminar = reaccion;
-                }
-            }
-            DB.eliminarReaccion(p.id, r.usuario.id);
-            p.reacciones.Remove(rEliminar);
-            
+            context.reacciones.Remove(r);
+            context.SaveChanges();            
         }
         public Usuario mostrarDatos(Usuario u)
         {
@@ -552,14 +459,8 @@ namespace TP3
         }
         public Post searchPost(int idPost)
         {
-            foreach (Post p in posts)
-            {
-                if (idPost == p.id)
-                {
-                    return p;
-                }
-            }
-            return null;
+            Post pRetornar = context.post.Where(p => p.id == idPost).FirstOrDefault();
+            return pRetornar;
         }
         public Usuario searchUser(int idUser)
         {
@@ -596,7 +497,6 @@ namespace TP3
             if (salida)
                 context.SaveChanges();
             return salida;
-            //DB.bloqUsuario(IdUsuario, Bloqueado);
         }
         public void eliminarTag (int tagId)
         {
@@ -617,10 +517,19 @@ namespace TP3
         {
             List<Post> salida = new List<Post>();
             foreach (Post p in context.post)
-                salida.Add( p);
+                salida.Add(p);
             return salida;
         }
 
+        public Comentario obtenerEfComments(int cId) 
+        {
+            return context.comentarios.Where(c => c.id == cId).FirstOrDefault();
+        }
+
+        public Reaccion obtenerEfReaccion(int uId)
+        {
+            return context.reacciones.Where(c => c.idUser == uId).FirstOrDefault();
+        }
         public List<Comentario> obtenerComentario()
         {
             List<Comentario> salida = new List<Comentario>();

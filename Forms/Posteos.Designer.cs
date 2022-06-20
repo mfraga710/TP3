@@ -237,6 +237,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Posteos";
+            this.Load += new System.EventHandler(this.Posteos_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.Posteo.ResumeLayout(false);

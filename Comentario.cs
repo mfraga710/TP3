@@ -12,19 +12,17 @@ namespace TP3
         public int idUser { get; set; }
         public Usuario usuario { get; set; }
         public string contenido { get; set; }
-        public DateTime fecha { get; set; }
-
-        static int idCont = 0;
+        public DateTime fecha { get; set; }        
 
         public Comentario() { }
 
         public Comentario(Post post, Usuario usuario, string contenido)
         {
-            this.id = idCont++;
+            this.id = id;
             this.post = post;
             this.usuario = usuario;
             this.contenido = contenido;
-            DateTime fecha = DateTime.Now;
+            this.fecha = DateTime.Now;
         }
 
         public Comentario(int id, Post post, Usuario usuario, string contenido)
@@ -33,7 +31,7 @@ namespace TP3
             this.post = post;
             this.usuario = usuario;
             this.contenido = contenido;
-            DateTime fecha = DateTime.Now;
+            this.fecha = DateTime.Now;
         }
 
     }

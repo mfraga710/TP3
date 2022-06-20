@@ -110,8 +110,8 @@ namespace TP3.Forms
             if (selrow.Count > 0)
             {
                 int comentId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-                c = rs.searchComent(comentId);
-                rs.quitarComentario(post, c);
+                Comentario coment = rs.obtenerEfComments(comentId);
+                rs.quitarComentario(coment);
                 MessageBox.Show("El comentario ha sido eliminado");
                 refreshComent();
             }
