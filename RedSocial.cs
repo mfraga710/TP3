@@ -19,7 +19,6 @@ namespace TP3
         public Usuario usuarioActual { get; set; }        
         private DbSet<Comentario> efComent { get; set; }
         private DbSet<Reaccion> efReacciones { get; set; }
-
         private MyContext context;
 
         private DAL DB;
@@ -39,7 +38,7 @@ namespace TP3
             {
                 //creo contexto
                 context = new MyContext();
-                context.usuarios.Load();
+                context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
                 misUsuarios = context.usuarios;
                 context.post.Load();
                 efPosts = context.post;
@@ -47,7 +46,7 @@ namespace TP3
                 efComent = context.comentarios;
                 context.reacciones.Load();
                 efReacciones = context.reacciones;
-                context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
+                
                 //context.tags.include ??
             }
             catch (Exception ex)
@@ -166,29 +165,30 @@ namespace TP3
         }
         public void agregarAmigo(Usuario amigo)
         {
-            foreach (Usuario u in usuarios)
-            {
-                if (u.id == usuarioActual.id)
-                {
-                    DB.agregarAmigo(amigo.id,u.id);
-                    DB.agregarAmigo(u.id, amigo.id);
-                    u.amigos.Add(amigo);
-                    amigo.amigos.Add(u);
-                }
-            }
+
+            UsuarioAmigo am1 = new UsuarioAmigo(context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault(), context.usuarios.Where(u => u.id == amigo.id).FirstOrDefault());
+            UsuarioAmigo am3 = new UsuarioAmigo(context.usuarios.Where(u => u.id == amigo.id).FirstOrDefault(), context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault());
+            
+            context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault().misAmigos.Add(am1);
+            context.usuarios.Where(u => u.id == amigo.id).FirstOrDefault().misAmigos.Add(am3);
+
+            context.usuarios.Update(context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault());
+            context.usuarios.Update(context.usuarios.Where(u => u.id == amigo.id).FirstOrDefault());
+            context.SaveChanges();
+
         }
         public void quitarAmigo(Usuario exAmigo)
         {
-            foreach (Usuario u in usuarios)
-            {
-                if (u.id == usuarioActual.id)
-                {
-                    DB.eliminarAmigo(exAmigo.id, u.id);
-                    DB.eliminarAmigo(u.id, exAmigo.id);
-                    u.amigos.Remove(exAmigo);
-                    exAmigo.amigos.Remove(u);                    
-                }
-            }
+            UsuarioAmigo am1 = context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault().misAmigos.Where(a => a.idUser == exAmigo.id).FirstOrDefault();
+            UsuarioAmigo am3 = context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault().misAmigos.Where(a => a.idUser == usuarioActual.id).FirstOrDefault();
+            //UsuarioAmigo am3 = new UsuarioAmigo(context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault(), context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault());
+
+            context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault().misAmigos.Remove(am1);
+            context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault().misAmigos.Remove(am3);
+
+            context.usuarios.Update(context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault());
+            context.usuarios.Update(context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault());
+            context.SaveChanges();
         }
         public bool efPostear(Usuario u, string contenido, List<Tag> newTags)  //OK (FALTA TAG)
         {
@@ -465,14 +465,18 @@ namespace TP3
         }
         public Usuario searchUser(int idUser)
         {
-            foreach (Usuario u in context.usuarios)
-            {
-                if (idUser == u.id)
-                {
-                    return u;
-                }
-            }
-            return null;
+
+            return context.usuarios.Where(u => u.id == idUser).FirstOrDefault();
+
+
+            //foreach (Usuario u in context.usuarios)
+            //{
+            //    if (idUser == u.id)
+            //    {
+            //        return u;
+            //    }
+            //}
+            //return null;
         }
         public Tag searchTag(int idTag)
         {
@@ -507,6 +511,12 @@ namespace TP3
 
 
         }
+        
+        public DbSet<Usuario> getAllUsers()
+        {
+            return context.usuarios;
+        }
+        
         public List<List<string>> obtenerUsuarios() //LINQ DE USUARIO (FALTA)
         {
             List<List<string>> salida = new List<List<string>>();
@@ -521,12 +531,11 @@ namespace TP3
                 salida.Add(p);
             return salida;
         }
-
         public Comentario obtenerEfComments(int cId) 
         {
+            
             return context.comentarios.Where(c => c.id == cId).FirstOrDefault();
         }
-
         public Reaccion obtenerEfReaccion(int uId)
         {
             return context.reacciones.Where(c => c.idUser == uId).FirstOrDefault();

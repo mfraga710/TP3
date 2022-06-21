@@ -186,7 +186,7 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("comentarios")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")
@@ -235,7 +235,7 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("reacciones")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")

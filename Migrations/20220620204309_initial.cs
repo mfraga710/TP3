@@ -110,8 +110,7 @@ namespace TP3.Migrations
                         name: "FK_Comentario_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Comentario_Usuarios_idUser",
                         column: x => x.idUser,
@@ -160,8 +159,7 @@ namespace TP3.Migrations
                         name: "FK_Reaccion_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Reaccion_Usuarios_idUser",
                         column: x => x.idUser,

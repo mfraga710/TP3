@@ -48,17 +48,23 @@ namespace TP3.Forms
         {
             var selrow = dataGridViewBuscarAmigos.SelectedRows;
             int amigoId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-            foreach (Usuario u in rs.usuarios)
-            {
-                if (u.id == amigoId)
-                {
-                    rs.agregarAmigo(u);
-                    dataGridViewBuscarAmigos.Rows.Remove(selrow[0]);
-                    refreshAmigos();
+            Usuario u = rs.searchUser(amigoId);
+            rs.agregarAmigo(u);
+            refreshAmigos();
+            refreshNoAmigos();
 
-                    break;
-                }
-            }
+
+            //foreach (Usuario u in rs.getAllUsers())
+            //{
+            //    if (u.id == amigoId)
+            //    {
+            //        rs.agregarAmigo(u);
+            //        dataGridViewBuscarAmigos.Rows.Remove(selrow[0]);
+            //        refreshAmigos();
+
+            //        break;
+            //    }
+            //}
         }
 
         // BUTTON - CIERRA LISTBOX 2
@@ -80,26 +86,33 @@ namespace TP3.Forms
         private void eliminarAmigo()
         {
             var selrow = dataGridViewAmigos.SelectedRows;
+            int amigoId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
+            Usuario u = rs.searchUser(amigoId);
+            
+            rs.quitarAmigo(u);
+            refreshAmigos();
+            refreshNoAmigos();
 
-            if (selrow.Count > 0)
-            {
-                int amigoId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-                foreach (Usuario u in rs.usuarios)
-                {
-                    if (u.id == amigoId)
-                    {
-                        rs.quitarAmigo(u);
-                        dataGridViewAmigos.Rows.Remove(selrow[0]);
-                        refreshAmigos();
-                        refreshNoAmigos();
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Debe seleccionar un amigo para eliminar");
-            }
+
+            //if (selrow.Count > 0)
+            //{
+            //    int amigoId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
+            //    foreach (Usuario u in rs.usuarios)
+            //    {
+            //        if (u.id == amigoId)
+            //        {
+            //            rs.quitarAmigo(u);
+            //            dataGridViewAmigos.Rows.Remove(selrow[0]);
+            //            refreshAmigos();
+            //            refreshNoAmigos();
+            //            break;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Debe seleccionar un amigo para eliminar");
+            //}
         }       
 
         // BUTTON - POSTEA
@@ -173,7 +186,7 @@ namespace TP3.Forms
                     Comentario coment = new Comentario(p, rs.usuarioActual, contenido);
                     rs.comentar(p,coment);
                     rs.obtenerComentario();
-                        refreshList(p);
+                    refreshList(p);
                 }
             }
         }
@@ -338,58 +351,61 @@ namespace TP3.Forms
         // FUNCION QUE REFRESCA LISTA NO AMIGO
         public void refreshNoAmigos()
         {
-            //dataGridViewBuscarAmigos.Rows.Clear();
-            //// VERIFICA QUE NO TENGA AMIGOS
-            //if (rs.usuarioActual.amigos.Count <= 0)
-            //{   // CARGA TODOS LOS USUARIOS
-            //    foreach (Usuario user in rs.usuarios)
-            //    {
-            //        if (!user.isAdm)
-            //        {
-            //            if (user.id != rs.usuarioActual.id)
-            //            {
-            //                dataGridViewBuscarAmigos.Rows.Add(user.id, user.nombre + " " + user.apellido);
-            //            }
-                    
-            //        }
+            dataGridViewBuscarAmigos.Rows.Clear();
+            // VERIFICA QUE NO TENGA AMIGOS
+            if (rs.usuarioActual.misAmigos.Count <= 0)
+            {   // CARGA TODOS LOS USUARIOS
+                foreach (Usuario user in rs.getAllUsers())
+                {   
+                    if (!user.isAdm)
+                    {
+                        if (user.id != rs.usuarioActual.id)
+                        {
+                            dataGridViewBuscarAmigos.Rows.Add(user.id, user.nombre + " " + user.apellido);
+                        }
 
-            //    }
-            //}
-            //else
-            //{   // TRAE TODAS LA LISTA DE USUARIOS QUE NO AMIGOS
-            //    foreach (Usuario amigo in rs.usuarioActual.amigos)
-            //    {   // INDICADOR DE NO AMIGO
-            //        //bool isnotamego = true;
-            //        foreach (Usuario user in rs.usuarios) // VERIFICA QUE EL NO AMIGO LO TENGA
-            //        {
-            //            if (!user.isAdm)
-            //            {
-            //                if (rs.usuarioActual.id != user.id)
-            //                {
-            //                    if (user.id != amigo.id)
-            //                    {
-            //                        dataGridViewBuscarAmigos.Rows.Add(user.id, user.nombre + " " + user.apellido);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        //if (isnotamego) 
-            //        //{
-            //        //    // AGREGA A LA LISTA
-            //        //    dataGridViewBuscarAmigos.Rows.Add(amigo.id, amigo.nombre + " " + amigo.apellido);
-            //        //}
-            //    }
-            //}
+                    }
+                }
+            }
+            else
+            {
+                bool isFriend=false;
+                foreach (Usuario user in rs.getAllUsers())
+                {
+                    if (!user.isAdm)
+                    {
+                        if (rs.usuarioActual.id != user.id)
+                        {
+                            foreach (UsuarioAmigo amigo in rs.usuarioActual.misAmigos)
+                            {
+                                if (user.id == amigo.idUser)
+                                {
+                                    isFriend = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    isFriend = false;
+                                }
+                            }
+                            if (!isFriend)
+                            {
+                                dataGridViewBuscarAmigos.Rows.Add(user.id, user.nombre + " " + user.apellido);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // FUNCION QUE REFRESCA LISTA DE AMIGO
         public void refreshAmigos()
         {
-            //dataGridViewAmigos.Rows.Clear();
-            //foreach (Usuario user in rs.usuarioActual.amigos)
-            //{
-            //    dataGridViewAmigos.Rows.Add(user.id, user.nombre + " " + user.apellido);
-            //}
+            dataGridViewAmigos.Rows.Clear();
+            foreach (UsuarioAmigo user in rs.usuarioActual.misAmigos)
+            {
+                dataGridViewAmigos.Rows.Add(user.amigo.id, user.amigo.nombre + " " + user.amigo.apellido);
+            }
         }
         // RECARGAR LA LISTA DE POST
         private void refreshList(Post p)

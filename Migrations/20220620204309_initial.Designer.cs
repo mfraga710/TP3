@@ -10,7 +10,7 @@ using TP3;
 namespace TP3.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20220619224932_initial")]
+    [Migration("20220620204309_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,7 +188,7 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("comentarios")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")
@@ -237,7 +237,7 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("reacciones")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")
