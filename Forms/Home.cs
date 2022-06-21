@@ -485,7 +485,7 @@ namespace TP3.Forms
 
             dataGridViewPosts.Rows.Clear();
             
-            foreach (Post p in rs.obtenerPosts())
+            foreach (Post p in listaPost)
             {
                 string pTags = "";                
                 //foreach (Tag t in p.tags)

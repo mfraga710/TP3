@@ -354,7 +354,7 @@ namespace TP3
         {
           return usuarioActual.misPosts;
         }
-        public List<Post> mostrarPostsAmigos()
+        public List<Post> mostrarPostsAmigos() // REVISAR NO FUNCIONA!!
         {
             List<Post> postsAmigos = new List<Post>();
             foreach (Usuario amigo in usuarioActual.amigos)
