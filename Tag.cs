@@ -8,16 +8,13 @@ namespace TP3
     {
         public int id { get; set; }
         public string palabra { get; set; }
-        //public List<Post> posts { get; set; }
-
-        static int idTag = 0;
         public ICollection<Post> Post { get; } = new List<Post>();
         public List<PostsTags> PostsTags { get; set; }
 
         public Tag() { }
         public Tag(string palabra)
         {
-            id = idTag++;
+            this.id = id;
             this.palabra = palabra;
             //posts = new List<Post>();
         }

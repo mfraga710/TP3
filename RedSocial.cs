@@ -19,6 +19,8 @@ namespace TP3
         public Usuario usuarioActual { get; set; }        
         private DbSet<Comentario> efComent { get; set; }
         private DbSet<Reaccion> efReacciones { get; set; }
+        private DbSet<Tag> efTags { get; set; }
+
         private MyContext context;
 
         private DAL DB;
@@ -40,12 +42,17 @@ namespace TP3
                 context = new MyContext();
                 context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
                 misUsuarios = context.usuarios;
-                context.post.Load();
+                //context.post.Load();
+                context.post.Include(p => p.Tag).Load();
+                context.tags.Include(t => t.Post).Load();
                 efPosts = context.post;
                 context.comentarios.Load();
                 efComent = context.comentarios;
                 context.reacciones.Load();
                 efReacciones = context.reacciones;
+                context.tags.Load();
+                efTags = context.tags;
+                
                 
                 //context.tags.include ??
             }
@@ -200,9 +207,34 @@ namespace TP3
                 {
                     Post nPost = new Post(u, contenido);
                     user.misPosts.Add(nPost);
-                    efPosts.Add(nPost);                    
+                    efPosts.Add(nPost);
+                    foreach (Tag t in newTags)
+                    {
+                        efTags.Add(t);
+                    }
                     context.SaveChanges();
-                    
+                    nPost = context.post.OrderByDescending(x => x.id).First();
+
+                    foreach (Tag t in newTags)
+                    {
+                        Tag lT = context.tags.Where(st => st.palabra == t.palabra).FirstOrDefault();
+                        nPost.Tag.Add(lT);
+                        context.post.Update(nPost);
+                        context.SaveChanges();
+                    }
+
+                    foreach (Post p in context.post)
+                    {
+
+                    }
+
+                    foreach (Tag t in context.tags)
+                    {
+
+                    }
+
+
+
                     return true;
                 }
                 else { return false; }
@@ -510,13 +542,11 @@ namespace TP3
             tags.Remove(searchTag(tagId));
 
 
-        }
-        
+        }        
         public DbSet<Usuario> getAllUsers()
         {
             return context.usuarios;
-        }
-        
+        }        
         public List<List<string>> obtenerUsuarios() //LINQ DE USUARIO (FALTA)
         {
             List<List<string>> salida = new List<List<string>>();

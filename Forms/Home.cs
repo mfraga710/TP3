@@ -498,6 +498,9 @@ namespace TP3.Forms
             
         }
 
+        private void Home_Load(object sender, EventArgs e)
+        {
 
+        }
     }
 }
