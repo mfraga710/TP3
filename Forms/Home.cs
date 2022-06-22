@@ -25,7 +25,7 @@ namespace TP3.Forms
 
             refreshAmigos();            
             refreshNoAmigos();            
-            refreshHomePosts(rs.posts);
+            refreshHomePosts(rs.obtenerPosts());
 
             //dataGridViewPosts.Rows.Clear();
         }
@@ -212,10 +212,8 @@ namespace TP3.Forms
             else
             {
                 MessageBox.Show("Debe seleccionar un Post");
-            }
-            
+            }            
         }
-
         // BUTTON - ELIMINAR POST
         private void btnEliminarPost_Click(object sender, EventArgs e)
         {
@@ -307,8 +305,7 @@ namespace TP3.Forms
             else
             {
                 MessageBox.Show("Se debe seleccionar un comentario para editar");
-            }
-            
+            }            
         }
         // BUTTON - ELIMINA COMENTARIO
         private void btnEliminarComentario_Click(object sender, EventArgs e)
@@ -466,13 +463,11 @@ namespace TP3.Forms
             {
                 MessageBox.Show("Usted no tiene amigos");
             }
-
-
         }
         // BUTTON - VER TODOS LOS POSTS
         private void btnVerAllPosts_Click(object sender, EventArgs e)
         {
-            refreshHomePosts(rs.posts);
+            refreshHomePosts(rs.obtenerPosts());
         }
 
         private void btnSalirApp_Click(object sender, EventArgs e)
@@ -487,15 +482,13 @@ namespace TP3.Forms
             
             foreach (Post p in listaPost)
             {
-                string pTags = "";                
-                //foreach (Tag t in p.tags)
-                //{
-                //    Console.Write("3: "+t.palabra);
-                //    pTags = pTags + t.palabra + " ";
-                //}
+                string pTags = "";
+                foreach (Tag t in p.Tag)
+                {                    
+                    pTags = pTags + t.palabra + " ";
+                }
                 dataGridViewPosts.Rows.Add(p.id, p.user.nombre + " " + p.user.apellido, p.contenido, pTags);
-            }
-            
+            }            
         }
 
         private void Home_Load(object sender, EventArgs e)

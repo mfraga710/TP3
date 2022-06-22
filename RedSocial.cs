@@ -41,8 +41,7 @@ namespace TP3
                 //creo contexto
                 context = new MyContext();
                 context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
-                misUsuarios = context.usuarios;
-                //context.post.Load();
+                misUsuarios = context.usuarios;                
                 context.post.Include(p => p.Tag).Load();
                 context.tags.Include(t => t.Post).Load();
                 efPosts = context.post;
@@ -52,56 +51,12 @@ namespace TP3
                 efReacciones = context.reacciones;
                 context.tags.Load();
                 efTags = context.tags;
-                
-                
-                //context.tags.include ??
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-
-            posts = DB.inicializarPosts();
-            tags = DB.inicializarTags();
-
-            List<Reaccion> reacciones = DB.inicializarReaccion();
-            foreach (Reaccion reaccion in reacciones)
-            {
-                foreach (Post p in posts)
-                {
-                    if (p.id == reaccion.post.id)
-                    {
-                        p.reacciones.Add(reaccion);
-                    }
-                }
-            }
-            List<Comentario> comentarios = DB.inicializarComentarios();
-            foreach (Post p in posts)
-            {
-                foreach (Comentario c in comentarios)
-                {
-                    if (p.id == c.post.id)
-                    {
-                        p.comentarios.Add(c);
-                    }
-                }
-            }
-
-            //foreach (Tag t in tags)
-            //{
-            //    foreach (Post pT in t.posts)
-            //    {
-            //        foreach (Post p in posts)
-            //        {
-            //            if (pT.id == p.id)
-            //            {
-            //                p.tags.Add(t);
-            //            }
-            //        }
-            //    }
-            //}
-
         }       
         public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm) // OK
         {
@@ -222,18 +177,6 @@ namespace TP3
                         context.post.Update(nPost);
                         context.SaveChanges();
                     }
-
-                    foreach (Post p in context.post)
-                    {
-
-                    }
-
-                    foreach (Tag t in context.tags)
-                    {
-
-                    }
-
-
 
                     return true;
                 }
@@ -386,12 +329,13 @@ namespace TP3
         {
           return usuarioActual.misPosts;
         }
-        public List<Post> mostrarPostsAmigos() // REVISAR NO FUNCIONA!!
+        public List<Post> mostrarPostsAmigos()
         {
             List<Post> postsAmigos = new List<Post>();
-            foreach (Usuario amigo in usuarioActual.amigos)
+
+            foreach (UsuarioAmigo user in usuarioActual.misAmigos)
             {
-                postsAmigos.AddRange(amigo.misPosts);
+                postsAmigos.AddRange(user.amigo.misPosts);
             }
 
             return postsAmigos;
@@ -497,18 +441,7 @@ namespace TP3
         }
         public Usuario searchUser(int idUser)
         {
-
             return context.usuarios.Where(u => u.id == idUser).FirstOrDefault();
-
-
-            //foreach (Usuario u in context.usuarios)
-            //{
-            //    if (idUser == u.id)
-            //    {
-            //        return u;
-            //    }
-            //}
-            //return null;
         }
         public Tag searchTag(int idTag)
         {
