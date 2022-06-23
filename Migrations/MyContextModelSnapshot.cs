@@ -132,9 +132,6 @@ namespace TP3.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Usuarioid")
-                        .HasColumnType("int");
-
                     b.Property<string>("apellido")
                         .HasColumnType("varchar(200)");
 
@@ -161,8 +158,6 @@ namespace TP3.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Usuarioid");
-
                     b.ToTable("Usuarios");
                 });
 
@@ -186,13 +181,13 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("comentarios")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")
                         .WithMany("misComentarios")
                         .HasForeignKey("idUser")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("post");
@@ -205,7 +200,7 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Usuario", "user")
                         .WithMany("misPosts")
                         .HasForeignKey("idUser")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("user");
@@ -235,25 +230,18 @@ namespace TP3.Migrations
                     b.HasOne("TP3.Post", "post")
                         .WithMany("reacciones")
                         .HasForeignKey("idPost")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TP3.Usuario", "usuario")
                         .WithMany("misReacciones")
                         .HasForeignKey("idUser")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("post");
 
                     b.Navigation("usuario");
-                });
-
-            modelBuilder.Entity("TP3.Usuario", b =>
-                {
-                    b.HasOne("TP3.Usuario", null)
-                        .WithMany("amigos")
-                        .HasForeignKey("Usuarioid");
                 });
 
             modelBuilder.Entity("TP3.UsuarioAmigo", b =>
@@ -291,8 +279,6 @@ namespace TP3.Migrations
 
             modelBuilder.Entity("TP3.Usuario", b =>
                 {
-                    b.Navigation("amigos");
-
                     b.Navigation("amigosMios");
 
                     b.Navigation("misAmigos");

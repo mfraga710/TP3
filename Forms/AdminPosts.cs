@@ -28,7 +28,7 @@ namespace TP3.Forms
 
         public void refreshPost()
         {
-            foreach (Post p in rs.posts)
+            foreach (Post p in rs.obtenerPosts())
             {
                 if (p.id == post.id)
                 {

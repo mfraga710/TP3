@@ -10,26 +10,20 @@ namespace TP3
 {
      public class RedSocial
      {
-        public List<Usuario> usuarios { get; set; }
-
         private DbSet<Usuario> misUsuarios;
-        public List<Post> posts { get; set; }
         private DbSet<Post> efPosts { get; set; }
         public List<Tag> tags { get; set; }
         public Usuario usuarioActual { get; set; }        
         private DbSet<Comentario> efComent { get; set; }
         private DbSet<Reaccion> efReacciones { get; set; }
         private DbSet<Tag> efTags { get; set; }
+        private int intentos;
 
         private MyContext context;
-
-        private DAL DB;
         public RedSocial()
         {
-            usuarios = new List<Usuario>();
-            posts = new List<Post>();
             tags = new List<Tag>();
-            DB = new DAL();
+            intentos = 0;
             inicializarAtributos();
 
         }
@@ -61,8 +55,9 @@ namespace TP3
         public void registrarUsuario(string nombre, string apellido, string mail, int dni, string pass, bool isAdm) // OK
         {
             Usuario nuevo = new Usuario(nombre,apellido, mail, dni, pass, isAdm);
-            misUsuarios.Add(nuevo);
+            context.usuarios.Add(nuevo);
             context.SaveChanges();
+            context.usuarios.Include(u => u.misAmigos).ThenInclude(ua => ua.user).Include(u => u.amigosMios).ThenInclude(ua => ua.amigo).Load();
         }
         public bool modificaUsuario(Usuario usuarioModificado) // OK
         {
@@ -98,20 +93,31 @@ namespace TP3
         }
         public bool iniciarSesion(string usuario, string pass)
         {
-            bool flag = false;
-            int intentos = 0;
-            
-            foreach (Usuario user in misUsuarios)
+
+            List<Usuario> salida = new List<Usuario>();
+            var query = from Usuario in context.usuarios
+                        where Usuario.email == usuario && Usuario.password == pass
+                        select Usuario;
+
+            if (query.Count() != 0)
             {
-                if (user.email.Equals(usuario) && user.password.Equals(pass)) 
+
+                Usuario user = query.First();
+                if (!user.bloqueado)
                 {
-                    user.intentosFallidos = 0;
                     usuarioActual = user;
-                    flag = true;
+                    return true;
                 }
-                else { intentos++; }
+                else
+                {
+                    return false;
+                }
             }
-             return flag;
+            else
+            {
+                intentos++;
+                return false;
+            }
         }
         public void cerrarSesion(Forms.Home home,Login frm)
         {
@@ -165,7 +171,11 @@ namespace TP3
                     efPosts.Add(nPost);
                     foreach (Tag t in newTags)
                     {
-                        efTags.Add(t);
+                        Tag pT = context.tags.Where(tg => tg.palabra == t.palabra).FirstOrDefault();
+                        if (pT == null)
+                        {
+                            efTags.Add(t);
+                        }                        
                     }
                     context.SaveChanges();
                     nPost = context.post.OrderByDescending(x => x.id).First();
@@ -250,14 +260,10 @@ namespace TP3
         {
             if (postId != 0)
             {
-                DB.modificarPostAdm(postId, nuevoContenido);
-                foreach (Post post in posts)
-                {
-                    if (post.id == postId)
-                    {
-                        post.contenido = nuevoContenido;
-                    }
-                }
+                Post p = searchPost(postId);
+                p.contenido = nuevoContenido;
+                context.post.Update(p);
+                context.SaveChanges();
             }
         }
         public void comentarAdmin(Post p, Usuario u, string contenido)
@@ -270,14 +276,10 @@ namespace TP3
         {
             if (comentId != 0)
             {
-                DB.modificarCommentAdm(comentId, nuevoContenido);
-                foreach (Comentario c in p.comentarios)
-                {
-                    if (c.id == comentId)
-                    {
-                        c.contenido = nuevoContenido;
-                    }
-                }
+                Comentario c = searchComent(comentId);
+                c.contenido = nuevoContenido;
+                context.comentarios.Update(c);
+                context.SaveChanges();
             }
         }
         public void quitarComentario(Comentario c) // OK
@@ -340,99 +342,135 @@ namespace TP3
 
             return postsAmigos;
         }
-        public List<Post> buscarPosts(String contenido, DateTime fechaDesde,DateTime fechaHasta, List<Tag> bTags)
+        public List<Post> buscarPosts(String pContenido, DateTime fechaDesde,DateTime fechaHasta, List<string> bTags)
         {
             List<Post> p = new List<Post>();
+            List<Post> partialList = new List<Post>();
             string fDesde = fechaDesde.Date.ToString("dd/MM/yyyy");
             string hDesde = fechaHasta.Date.ToString("dd/MM/yyyy");
             bool tagAgregado = false;
+            List<Tag> pTag = new List<Tag>();
 
-            foreach (Post pPost in posts)
-            {
-                if (contenido != "" )
+            if (bTags != null)
+            {                
+                //filtrado inicial por tags
+                foreach (string palabra in bTags)
                 {
-                    if (pPost.contenido.Contains(contenido))
+                    Tag t = context.tags.Where(t => t.palabra == palabra).FirstOrDefault();
+                    if (t != null)
                     {
-                        if (bTags.Count > 0)
+                        foreach (Post pp in t.Post)
                         {
-                            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-                            {
-                                foreach (Tag t in bTags)
-                                {
-                                    //foreach (Tag tPost in pPost.tags)
-                                    //{
-                                    //    if (t.palabra.Equals(tPost.palabra))
-                                    //    {
-                                    //        p.Add(pPost);
-                                    //        tagAgregado = true;
-                                    //        break;
-                                    //    }
-                                    //}
-                                    if (tagAgregado)
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-                            {
-                                p.Add(pPost);
-                            }
-                        }
-                    }                    
-                }
-                else
-                  {
-                    if (bTags.Count > 0)
-                    {
-                        if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-                        {
-                            foreach (Tag t in bTags)
-                            {
-                                //foreach (Tag tPost in pPost.tags)
-                                //{
-                                //    if (t.palabra.Equals(tPost.palabra))
-                                //    {
-                                //        p.Add(pPost);
-                                //        tagAgregado = true;
-                                //        break;
-                                //    }
-                                //}
-                                if (tagAgregado)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-                        {
-                            p.Add(pPost);
+                            partialList.Add(pp);
+                            p.Add(pp);
                         }
                     }
                 }
-            }   
+                if (pContenido != "" && p.Count > 0)
+                {
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.contenido != pContenido)
+                        {
+                            p.Remove(p1);
+                        }
+                    }
+
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.fecha.Date < fechaDesde.Date && p1.fecha.Date > fechaHasta.Date)
+                        {
+                            if (p.Contains(p1))
+                            {
+                                p.Remove(p1);
+                            }                            
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //por si no hay tags
+            }
+
+            //foreach (Post pPost in efPosts)
+            //{
+            //    if (contenido != "" )
+            //    {
+            //        if (pPost.contenido.Contains(contenido))
+            //        {
+            //            if (bTags.Count > 0)
+            //            {
+            //                  
+            //                {
+            //                    foreach (Tag t in bTags)
+            //                    {
+            //                        //foreach (Tag tPost in pPost.tags)
+            //                        //{
+            //                        //    if (t.palabra.Equals(tPost.palabra))
+            //                        //    {
+            //                        //        p.Add(pPost);
+            //                        //        tagAgregado = true;
+            //                        //        break;
+            //                        //    }
+            //                        //}
+            //                        if (tagAgregado)
+            //                        {
+            //                            break;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
+            //                {
+            //                    p.Add(pPost);
+            //                }
+            //            }
+            //        }                    
+            //    }
+            //    else
+            //      {
+            //        if (bTags.Count > 0)
+            //        {
+            //            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
+            //            {
+            //                foreach (Tag t in bTags)
+            //                {
+            //                    //foreach (Tag tPost in pPost.tags)
+            //                    //{
+            //                    //    if (t.palabra.Equals(tPost.palabra))
+            //                    //    {
+            //                    //        p.Add(pPost);
+            //                    //        tagAgregado = true;
+            //                    //        break;
+            //                    //    }
+            //                    //}
+            //                    if (tagAgregado)
+            //                    {
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
+            //            {
+            //                p.Add(pPost);
+            //            }
+            //        }
+            //    }
+            //}   
 
             return p;
         }
         public Comentario searchComent(int id)
         {
-            foreach (Post p in posts)
-            {
-                foreach (Comentario c in p.comentarios)
-                {
-                    if (c.id == id)
-                    {
-                        return c;
-                    }
-                }
-            }
-            return null;
+
+            Comentario c = context.comentarios.Where(pComment => pComment.id == id).FirstOrDefault();
+            return c;
         }
         public Post searchPost(int idPost)
         {
@@ -445,41 +483,37 @@ namespace TP3
         }
         public Tag searchTag(int idTag)
         {
-            foreach (Tag t in tags)
-            {
-                if (idTag == t.id)
-                {
-                    return t;
-                }
-            }
-            return null;
+            Tag t = context.tags.Where(pTag => pTag.id == idTag).FirstOrDefault();
+            return t;
         }
         public bool bloqUser(int IdUsuario, bool Bloqueado)
         {
             bool salida = false;
-            foreach (Usuario u in context.usuarios)
-                if (u.id == IdUsuario)
-                {
-                    u.bloqueado = Bloqueado;
-                    context.usuarios.Update(u);
-                    salida = true;
-                }
+            Usuario u = context.usuarios.Where(usr => usr.id == IdUsuario).FirstOrDefault();
+            u.bloqueado = Bloqueado;
+            u.intentosFallidos = 3;
+            context.usuarios.Update(u);
+            salida = true;
+  
             if (salida)
                 context.SaveChanges();
             return salida;
         }
         public void eliminarTag (int tagId)
         {
-            var result = DB.eliminarTagRel(tagId);
-            var result2 = DB.eliminarTag(tagId);
-            tags.Remove(searchTag(tagId));
-
-
+            Tag t = searchTag(tagId);
+            context.tags.Remove(t);
+            context.SaveChanges();
         }        
         public DbSet<Usuario> getAllUsers()
         {
             return context.usuarios;
         }        
+        public Usuario getUserByUserName(string userName)
+        {
+            Usuario u = context.usuarios.Where(usr => usr.email == userName).FirstOrDefault();
+            return u;
+        }
         public List<List<string>> obtenerUsuarios() //LINQ DE USUARIO (FALTA)
         {
             List<List<string>> salida = new List<List<string>>();
@@ -510,5 +544,14 @@ namespace TP3
                 salida.Add(c);
             return salida;
         }
+        public DbSet<Tag> obtenerEfTags()
+        {
+            return context.tags;
+        }
+        public void cerrarContextP()
+        {
+            context.Dispose();
+        }
+
     }
 }

@@ -12,12 +12,10 @@ namespace TP3.Forms
     {
         private RedSocial rs;
         private Login frm;
-        private DAL DB;
         public Home(RedSocial rs1, Login formLogin)
         {
             this.rs = rs1;
             frm = formLogin;
-            DB = new DAL();
             InitializeComponent();
 
             // AGREGA NOMBRE DE USUARIO
@@ -337,7 +335,7 @@ namespace TP3.Forms
         public void refreshCommentsGrid()
         {
             dataGridViewComentarios.Rows.Clear();
-            foreach (Post p in rs.posts)
+            foreach (Post p in rs.obtenerPosts())
             {
                 foreach (Comentario c in p.comentarios)
                 {
@@ -427,14 +425,14 @@ namespace TP3.Forms
             DateTime fechaDesde = dateTimePicker1.Value;
             DateTime fechaHasta = dateTimePicker2.Value;
             string pContenido = textBoxBuscarContenido.Text;
-            List<Tag> tags = new List<Tag>();
+            List<string> tags = new List<string>();
             string[] sTags = textBoxBuscarTags.Text.Split('#');
 
             foreach (var word in sTags)
             {
                 if (word.Length > 1)
                 {
-                        tags.Add(new Tag("#" + word));
+                        tags.Add("#" + word);
                 }                                       
             }
             List<Post> listaPost = rs.buscarPosts(pContenido, fechaDesde, fechaHasta, tags);
@@ -447,7 +445,7 @@ namespace TP3.Forms
             else
             {
                 MessageBox.Show("Su busqueda devolvio 0 coincidencias");
-                refreshHomePosts(rs.posts);
+                refreshHomePosts(rs.obtenerPosts());
             }
         }
         // BUTTON - VER POSTS DE AMIGOS
@@ -472,6 +470,7 @@ namespace TP3.Forms
 
         private void btnSalirApp_Click(object sender, EventArgs e)
         {
+            rs.cerrarContextP();
             Application.Exit();
         }
 
@@ -492,6 +491,11 @@ namespace TP3.Forms
         }
 
         private void Home_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxBuscarTags_TextChanged(object sender, EventArgs e)
         {
 
         }

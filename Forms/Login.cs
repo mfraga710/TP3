@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
 
 namespace TP3
 {
@@ -46,31 +47,37 @@ namespace TP3
                     Forms.Home home = new Forms.Home(rs, this);
                     home.Show();
                 }
-                ;
             }
             else
             {
-                foreach (Usuario user in rs.usuarios)
+                Usuario u = rs.getUserByUserName(textBoxUsuario.Text);
+                if (u != null)
                 {
-                    if (user.email == textBoxUsuario.Text)
+                    if (u.bloqueado == false)
                     {
-                        if (user.bloqueado == false)
+                        u.intentosFallidos++;
+                        intentosFallidos--;
+                        label7.Show();
+                        label7.Text = "Inicio de sesión Fallido, quedan " + intentosFallidos + " intentos";
+                        if (intentosFallidos == 0)
                         {
-                            user.intentosFallidos++;
-                            intentosFallidos--;
-                            label7.Show();
-                            label7.Text = "Inicio de sesión Fallido, quedan " + intentosFallidos + " intentos";
-                            if (intentosFallidos == 0)
+                            if (rs.bloqUser(u.id, true))
                             {
-                                user.bloqueado = true;
+                                label7.Show();
+                                label7.Text = "Su usuario ha sido bloqueado";
                             }
-                        }
-                        else
-                        {
-                            label7.Show();
-                            label7.Text = "Su usuario ha sido bloqueado por idiota";                            
+                            
                         }
                     }
+                    else
+                    {
+                        label7.Show();
+                        label7.Text = "Su usuario se encuentra bloqueado";
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("El usuario no existe");
                 }
             }
             textBoxUsuario.Clear();

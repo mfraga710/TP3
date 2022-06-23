@@ -15,9 +15,8 @@ namespace TP3
         public int intentosFallidos { get; set; }
         public bool bloqueado { get; set; }
         public bool isAdm { get; set; }
-        public virtual ICollection<UsuarioAmigo> misAmigos { get; set; }
+        public virtual ICollection<UsuarioAmigo> misAmigos { get; set; } 
         public virtual ICollection<UsuarioAmigo> amigosMios { get; set; }
-        public List<Usuario> amigos {get;set;}
         public List<Post> misPosts { get; } = new List<Post>();
         public List<Comentario> misComentarios { get; set; }
         public List<Reaccion> misReacciones { get; set; }
@@ -34,9 +33,9 @@ namespace TP3
             this.intentosFallidos = 0;
             this.isAdm = isAdm;
             this.bloqueado = false;
-            amigos = new List<Usuario>();
             misPosts = new List<Post>();
             misComentarios = new List<Comentario>();
+            
         }
         public Usuario(int id, string nombre, string apellido, string mail, int dni, string pass, int intentosFallidos, bool bloqueado, bool isAdm)
         {
@@ -49,7 +48,6 @@ namespace TP3
             this.intentosFallidos = 0;
             this.isAdm = isAdm;
             this.bloqueado = bloqueado;
-            amigos = new List<Usuario>();
             misPosts = new List<Post>();
             misComentarios = new List<Comentario>();
         }
@@ -65,7 +63,6 @@ namespace TP3
             intentosFallidos = 0;
             isAdm = false;
             bloqueado = false;
-            amigos = new List<Usuario>();
             misPosts = new List<Post>();
         }
     }

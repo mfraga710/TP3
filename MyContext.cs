@@ -35,31 +35,31 @@ namespace TP3
                 .HasOne(P => P.user)
                 .WithMany(U => U.misPosts)
                 .HasForeignKey(P => P.idUser)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<Comentario>()
                 .HasOne(C => C.usuario)
                 .WithMany(U => U.misComentarios)
                 .HasForeignKey(C => C.idUser)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Comentario>()
                 .HasOne(C => C.post)
                 .WithMany(P => P.comentarios)
                 .HasForeignKey(C => C.idPost)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reaccion>()
                 .HasOne(R => R.usuario)
                 .WithMany(U => U.misReacciones)
                 .HasForeignKey(R => R.idUser)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reaccion>()
                 .HasOne(R => R.post)
                 .WithMany(P => P.reacciones)
                 .HasForeignKey(R => R.idPost)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UsuarioAmigo>()
                .HasOne(UA => UA.user)
@@ -97,7 +97,6 @@ namespace TP3
                 });
 
             modelBuilder.Ignore<RedSocial>();
-            modelBuilder.Ignore<DAL>();
         }
     }
 }

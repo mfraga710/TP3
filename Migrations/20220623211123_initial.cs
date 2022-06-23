@@ -33,18 +33,11 @@ namespace TP3.Migrations
                     password = table.Column<string>(type: "varchar(200)", nullable: true),
                     intentosFallidos = table.Column<int>(type: "int", nullable: false),
                     bloqueado = table.Column<bool>(type: "bit", nullable: false),
-                    isAdm = table.Column<bool>(type: "bit", nullable: false),
-                    Usuarioid = table.Column<int>(type: "int", nullable: true)
+                    isAdm = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Usuarios_Usuarios_Usuarioid",
-                        column: x => x.Usuarioid,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,7 +58,7 @@ namespace TP3.Migrations
                         column: x => x.idUser,
                         principalTable: "Usuarios",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,12 +103,14 @@ namespace TP3.Migrations
                         name: "FK_Comentario_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comentario_Usuarios_idUser",
                         column: x => x.idUser,
                         principalTable: "Usuarios",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,12 +154,14 @@ namespace TP3.Migrations
                         name: "FK_Reaccion_Post_idPost",
                         column: x => x.idPost,
                         principalTable: "Post",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reaccion_Usuarios_idUser",
                         column: x => x.idUser,
                         principalTable: "Usuarios",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -201,11 +198,6 @@ namespace TP3.Migrations
                 name: "IX_Usuario_Amigo_idUser",
                 table: "Usuario_Amigo",
                 column: "idUser");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_Usuarioid",
-                table: "Usuarios",
-                column: "Usuarioid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

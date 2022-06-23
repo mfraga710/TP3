@@ -604,6 +604,7 @@
             this.textBoxBuscarTags.Name = "textBoxBuscarTags";
             this.textBoxBuscarTags.Size = new System.Drawing.Size(234, 31);
             this.textBoxBuscarTags.TabIndex = 38;
+            this.textBoxBuscarTags.TextChanged += new System.EventHandler(this.textBoxBuscarTags_TextChanged);
             // 
             // label10
             // 

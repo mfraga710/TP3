@@ -13,15 +13,13 @@ namespace TP3.Forms
     {
         private RedSocial rs;
         private Login frm;
-        private DAL DB;
         public Admin(RedSocial rs1, Login formLogin)
         {
             this.rs = rs1;
             frm = formLogin;
-            DB = new DAL();
+
             InitializeComponent();
             refreshUsuariosEF();
-            //refreshUsuarios();
             refreshTags();
             refreshPost();
         }
@@ -36,7 +34,7 @@ namespace TP3.Forms
         public void refreshPost()
         {
             listadoPost.Rows.Clear();
-            foreach (Post post in rs.posts)
+            foreach (Post post in rs.obtenerPosts())
             {
                 listadoPost.Rows.Add(post.id, post.user.nombre + " " + post.user.apellido, post.contenido);
             }
@@ -46,7 +44,7 @@ namespace TP3.Forms
         public void refreshTags()
         {
             listadoTags.Rows.Clear();
-            foreach (Tag t in rs.tags)
+            foreach (Tag t in rs.obtenerEfTags())
             {
                 listadoTags.Rows.Add(t.id, t.palabra);
             }

@@ -11,8 +11,6 @@ namespace TP3.Forms
     public partial class EditarComentario : Form
     {
         private RedSocial rs;
-        private int idComment;
-        private int idPost;
         private Home frm;
         private Comentario lComment;
 
