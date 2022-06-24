@@ -96,6 +96,26 @@ namespace TP3
                     usr.Property(u => u.isAdm).HasColumnType("bit");
                 });
 
+            //Datos de prueba
+            modelBuilder.Entity<Usuario>().HasData(
+                new {id = 1, dni = 111, nombre = "Mariano", apellido = "Rojas", email = "mariano@mail.com", password = "111", intentosFallidos = 0, bloqueado = false , isAdm = true});
+            modelBuilder.Entity<Usuario>().HasData(
+                new { id = 2, dni = 222, nombre = "Alan", apellido = "Carballal", email = "alan@mail.com", password = "222", intentosFallidos = 0, bloqueado = false, isAdm = false });
+            modelBuilder.Entity<Usuario>().HasData(
+                new { id = 3, dni = 222, nombre = "Manuel", apellido = "Fraga", email = "Manuel@mail.com", password = "333", intentosFallidos = 0, bloqueado = false, isAdm = false });
+            modelBuilder.Entity<Post>().HasData(
+                new { id = 1, idUser = 1, contenido = "Como estan?", fecha = DateTime.Now });
+            modelBuilder.Entity<Post>().HasData(
+                new { id = 2, idUser = 2, contenido = "Todo bien por suerte", fecha = DateTime.Now });
+            modelBuilder.Entity<Post>().HasData(
+                new { id = 3, idUser = 3, contenido = "Hola", fecha = DateTime.Now });
+            modelBuilder.Entity<Comentario>().HasData(
+                new { id = 1, idPost = 1, idUser= 1,  contenido = "Argentina", fecha = DateTime.Now });
+            modelBuilder.Entity<Comentario>().HasData(
+                new { id = 2, idPost = 2, idUser = 2, contenido = "Argentina", fecha = DateTime.Now });
+            modelBuilder.Entity<Comentario>().HasData(
+                new { id = 3, idPost = 3, idUser = 3, contenido = "Argentina", fecha = DateTime.Now });
+
             modelBuilder.Ignore<RedSocial>();
         }
     }

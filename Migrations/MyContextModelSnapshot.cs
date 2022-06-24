@@ -45,6 +45,32 @@ namespace TP3.Migrations
                     b.HasIndex("idUser");
 
                     b.ToTable("Comentario");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            contenido = "Argentina",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 842, DateTimeKind.Local).AddTicks(9285),
+                            idPost = 1,
+                            idUser = 1
+                        },
+                        new
+                        {
+                            id = 2,
+                            contenido = "Argentina",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 843, DateTimeKind.Local).AddTicks(339),
+                            idPost = 2,
+                            idUser = 2
+                        },
+                        new
+                        {
+                            id = 3,
+                            contenido = "Argentina",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 843, DateTimeKind.Local).AddTicks(420),
+                            idPost = 3,
+                            idUser = 3
+                        });
                 });
 
             modelBuilder.Entity("TP3.Post", b =>
@@ -68,6 +94,29 @@ namespace TP3.Migrations
                     b.HasIndex("idUser");
 
                     b.ToTable("Post");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            contenido = "Como estan?",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 841, DateTimeKind.Local).AddTicks(7095),
+                            idUser = 1
+                        },
+                        new
+                        {
+                            id = 2,
+                            contenido = "Todo bien por suerte",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 842, DateTimeKind.Local).AddTicks(9122),
+                            idUser = 2
+                        },
+                        new
+                        {
+                            id = 3,
+                            contenido = "Hola",
+                            fecha = new DateTime(2022, 6, 24, 16, 27, 43, 842, DateTimeKind.Local).AddTicks(9192),
+                            idUser = 3
+                        });
                 });
 
             modelBuilder.Entity("TP3.PostsTags", b =>
@@ -159,6 +208,44 @@ namespace TP3.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            apellido = "Rojas",
+                            bloqueado = false,
+                            dni = 111,
+                            email = "mariano@mail.com",
+                            intentosFallidos = 0,
+                            isAdm = true,
+                            nombre = "Mariano",
+                            password = "111"
+                        },
+                        new
+                        {
+                            id = 2,
+                            apellido = "Carballal",
+                            bloqueado = false,
+                            dni = 222,
+                            email = "alan@mail.com",
+                            intentosFallidos = 0,
+                            isAdm = false,
+                            nombre = "Alan",
+                            password = "222"
+                        },
+                        new
+                        {
+                            id = 3,
+                            apellido = "Fraga",
+                            bloqueado = false,
+                            dni = 222,
+                            email = "Manuel@mail.com",
+                            intentosFallidos = 0,
+                            isAdm = false,
+                            nombre = "Manuel",
+                            password = "333"
+                        });
                 });
 
             modelBuilder.Entity("TP3.UsuarioAmigo", b =>
