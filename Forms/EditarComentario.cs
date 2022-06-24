@@ -14,7 +14,6 @@ namespace TP3.Forms
         private Home frm;
         private Comentario lComment;
 
-
         public EditarComentario(RedSocial rs1, Home frm1, Comentario c)
         {
             this.frm = frm1;

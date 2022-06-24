@@ -50,19 +50,6 @@ namespace TP3.Forms
             rs.agregarAmigo(u);
             refreshAmigos();
             refreshNoAmigos();
-
-
-            //foreach (Usuario u in rs.getAllUsers())
-            //{
-            //    if (u.id == amigoId)
-            //    {
-            //        rs.agregarAmigo(u);
-            //        dataGridViewBuscarAmigos.Rows.Remove(selrow[0]);
-            //        refreshAmigos();
-
-            //        break;
-            //    }
-            //}
         }
 
         // BUTTON - CIERRA LISTBOX 2
@@ -90,27 +77,6 @@ namespace TP3.Forms
             rs.quitarAmigo(u);
             refreshAmigos();
             refreshNoAmigos();
-
-
-            //if (selrow.Count > 0)
-            //{
-            //    int amigoId = Int32.Parse(selrow[0].Cells[0].Value.ToString());
-            //    foreach (Usuario u in rs.usuarios)
-            //    {
-            //        if (u.id == amigoId)
-            //        {
-            //            rs.quitarAmigo(u);
-            //            dataGridViewAmigos.Rows.Remove(selrow[0]);
-            //            refreshAmigos();
-            //            refreshNoAmigos();
-            //            break;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Debe seleccionar un amigo para eliminar");
-            //}
         }       
 
         // BUTTON - POSTEA
@@ -180,7 +146,6 @@ namespace TP3.Forms
                 if (p.id == idP)
                 {
                     string contenido = textBoxComentarPost.Text;
-                    //DB.agregarComentario(p, p.user, contenido);
                     Comentario coment = new Comentario(p, rs.usuarioActual, contenido);
                     rs.comentar(p,coment);
                     rs.obtenerComentario();

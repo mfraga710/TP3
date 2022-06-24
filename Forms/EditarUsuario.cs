@@ -16,8 +16,6 @@ namespace TP3.Forms
         private Admin frm1;
         private Login log;
         
-
-
         public EditarUsuario(RedSocial rs1, Admin frm1, Usuario user)
         {
             this.frm1 = frm1;

@@ -25,7 +25,6 @@ namespace TP3
 
         public Login(Login formLogin)
         {
-            //this.rs = rs1;
             InitializeComponent();
         }
 

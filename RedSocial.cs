@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -25,7 +23,6 @@ namespace TP3
             tags = new List<Tag>();
             intentos = 0;
             inicializarAtributos();
-
         }
 
         private void inicializarAtributos()
@@ -149,8 +146,7 @@ namespace TP3
         {
             UsuarioAmigo am1 = context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault().misAmigos.Where(a => a.idUser == exAmigo.id).FirstOrDefault();
             UsuarioAmigo am3 = context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault().misAmigos.Where(a => a.idUser == usuarioActual.id).FirstOrDefault();
-            //UsuarioAmigo am3 = new UsuarioAmigo(context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault(), context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault());
-
+            
             context.usuarios.Where(u => u.id == usuarioActual.id).FirstOrDefault().misAmigos.Remove(am1);
             context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault().misAmigos.Remove(am3);
 
@@ -158,7 +154,7 @@ namespace TP3
             context.usuarios.Update(context.usuarios.Where(u => u.id == exAmigo.id).FirstOrDefault());
             context.SaveChanges();
         }
-        public bool efPostear(Usuario u, string contenido, List<Tag> newTags)  //OK (FALTA TAG)
+        public bool efPostear(Usuario u, string contenido, List<Tag> newTags)  //OK 
         {
             try
             {
@@ -192,7 +188,7 @@ namespace TP3
                 }
                 else { return false; }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -231,7 +227,6 @@ namespace TP3
         }
         public bool comentar(Post p, Comentario c) // OK
         {
-
             try
             {
                 Post post = context.post.Where(pos => pos.id == p.id).FirstOrDefault();
@@ -246,7 +241,7 @@ namespace TP3
                 }
                 else { return false; }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -256,7 +251,7 @@ namespace TP3
             context.comentarios.Update(c);
             context.SaveChanges();
         }
-        public void modificarPostAdmin(int postId, string nuevoContenido) // FALTA
+        public void modificarPostAdmin(int postId, string nuevoContenido) 
         {
             if (postId != 0)
             {
@@ -266,13 +261,16 @@ namespace TP3
                 context.SaveChanges();
             }
         }
-        public void comentarAdmin(Post p, Usuario u, string contenido)
+        public void comentarAdmin(Post p, Comentario c)
         {
-            //p.comentarios.Add(c);
-            //Comentario coment = new Comentario(DB.agregarComentario(p, u, contenido), p, u, contenido);
-            //p.comentarios.Add(coment);
+            Post post = context.post.Where(pos => pos.id == p.id).FirstOrDefault();
+
+            post.comentarios.Add(c);
+            context.comentarios.Add(c);
+            context.post.Update(post);
+            context.SaveChanges();
         }
-        public void modificarCommentAdmin(Post p,int comentId, string nuevoContenido) // FALTA
+        public void modificarCommentAdmin(Post p,int comentId, string nuevoContenido) 
         {
             if (comentId != 0)
             {
@@ -348,10 +346,9 @@ namespace TP3
             List<Post> partialList = new List<Post>();
             string fDesde = fechaDesde.Date.ToString("dd/MM/yyyy");
             string hDesde = fechaHasta.Date.ToString("dd/MM/yyyy");
-            bool tagAgregado = false;
             List<Tag> pTag = new List<Tag>();
 
-            if (bTags != null)
+            if (bTags != null && bTags.Count > 0)
             {                
                 //filtrado inicial por tags
                 foreach (string palabra in bTags)
@@ -387,82 +384,74 @@ namespace TP3
                         }
                     }
                 }
+                else
+                {
+                    //si no tiene contenido
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.fecha.Date < fechaDesde.Date && p1.fecha.Date > fechaHasta.Date)
+                        {
+                            if (p.Contains(p1))
+                            {
+                                p.Remove(p1);
+                            }
+                        }
+                    }
+                }
             }
             else
             {
-                //por si no hay tags
-            }
+                //si no hay tag
+                partialList = context.post.Where(t => t.contenido == pContenido).ToList();
 
-            //foreach (Post pPost in efPosts)
-            //{
-            //    if (contenido != "" )
-            //    {
-            //        if (pPost.contenido.Contains(contenido))
-            //        {
-            //            if (bTags.Count > 0)
-            //            {
-            //                  
-            //                {
-            //                    foreach (Tag t in bTags)
-            //                    {
-            //                        //foreach (Tag tPost in pPost.tags)
-            //                        //{
-            //                        //    if (t.palabra.Equals(tPost.palabra))
-            //                        //    {
-            //                        //        p.Add(pPost);
-            //                        //        tagAgregado = true;
-            //                        //        break;
-            //                        //    }
-            //                        //}
-            //                        if (tagAgregado)
-            //                        {
-            //                            break;
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-            //                {
-            //                    p.Add(pPost);
-            //                }
-            //            }
-            //        }                    
-            //    }
-            //    else
-            //      {
-            //        if (bTags.Count > 0)
-            //        {
-            //            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-            //            {
-            //                foreach (Tag t in bTags)
-            //                {
-            //                    //foreach (Tag tPost in pPost.tags)
-            //                    //{
-            //                    //    if (t.palabra.Equals(tPost.palabra))
-            //                    //    {
-            //                    //        p.Add(pPost);
-            //                    //        tagAgregado = true;
-            //                    //        break;
-            //                    //    }
-            //                    //}
-            //                    if (tagAgregado)
-            //                    {
-            //                        break;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (pPost.fecha.Date >= fechaDesde.Date && pPost.fecha.Date <= fechaHasta.Date)
-            //            {
-            //                p.Add(pPost);
-            //            }
-            //        }
-            //    }
-            //}   
+                foreach (Post pp in partialList)
+                {
+                    p.Add(pp);
+                }
+
+                if (pContenido != "" && p.Count > 0)
+                {
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.contenido != pContenido)
+                        {
+                            p.Remove(p1);
+                        }
+                    }
+
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.fecha.Date < fechaDesde.Date && p1.fecha.Date > fechaHasta.Date)
+                        {
+                            if (p.Contains(p1))
+                            {
+                                p.Remove(p1);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //si no tiene contenido ni tags
+                    partialList = context.post.ToList();
+                    
+                    foreach (Post pp in partialList)
+                    {
+                        p.Add(pp);
+                    }
+                    
+                    foreach (Post p1 in partialList)
+                    {
+                        if (p1.fecha.Date < fechaDesde.Date && p1.fecha.Date > fechaHasta.Date)
+                        {
+                            if (p.Contains(p1))
+                            {
+                                p.Remove(p1);
+                            }
+                        }
+                    }
+                }
+            }
 
             return p;
         }

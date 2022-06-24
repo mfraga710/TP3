@@ -13,7 +13,6 @@ namespace TP3
         public int idUser { get; set; }
         public Usuario usuario { get;  set; }
 
-        //static int idCont = 0;
         public const string ME_GUSTA = "Me gusta";
         public const string NO_ME_GUSTA = "No me gusta";
 

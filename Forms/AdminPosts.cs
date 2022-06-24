@@ -92,8 +92,8 @@ namespace TP3.Forms
         {
             if (textBox3.Text.Length > 0)
             {
-
-                rs.comentarAdmin(post, rs.usuarioActual, textBox3.Text);
+                Comentario coment = new Comentario(post, rs.usuarioActual, textBox3.Text);
+                rs.comentarAdmin(post, coment);
                 refreshComent();
                 MessageBox.Show("El comentario ha sido agregado");
             }

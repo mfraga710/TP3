@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace TP3
 {
@@ -16,13 +14,11 @@ namespace TP3
         {
             this.id = id;
             this.palabra = palabra;
-            //posts = new List<Post>();
         }
         public Tag(int id,string palabra, List<Post> posts)
         {
             this.id = id;
             this.palabra = palabra;
-            //this.posts = posts;
         }
     }
 }

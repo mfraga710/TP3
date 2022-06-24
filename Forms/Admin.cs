@@ -24,7 +24,6 @@ namespace TP3.Forms
             refreshPost();
         }
 
-
         public void refreshUsuariosEF()
         {
             listaUsuarios.Rows.Clear();
